@@ -66,7 +66,11 @@ func generateController(name string, method string) string {
 	builder.WriteString("Controller, l *lux.Lux) {\n")
 	builder.WriteString("\tl.RegisterController(Route, controller.")
 	builder.WriteString(strings.ToUpper(method))
-	builder.WriteString(", c)\n")
+	builder.WriteString(", controller.Controller{\n")
+	builder.WriteString("\t\tRequestMiddlewares: c.requestMiddlewares,\n")
+	builder.WriteString("\t\tHandler: c.handler,\n")
+	builder.WriteString("\t\tResponseMiddlewares: c.responseMiddlewares,\n")
+	builder.WriteString("\t})\n")
 	builder.WriteString("}\n")
 
 	return builder.String()
