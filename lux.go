@@ -2,10 +2,7 @@ package lux
 
 import (
 	ctx "context"
-	"encoding/json"
 	"net/http"
-	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/rs/zerolog"
@@ -13,7 +10,6 @@ import (
 	"github.com/caddyserver/certmagic"
 	"github.com/julienschmidt/httprouter"
 	"github.com/snowmerak/lux/context"
-	"github.com/snowmerak/lux/swagger"
 	"golang.org/x/net/http2"
 )
 
@@ -21,22 +17,15 @@ type Lux struct {
 	logger      *zerolog.Logger
 	server      *http.Server
 	builtRouter *httprouter.Router
-	swagger     *swagger.Swagger
 	jwtConfig   *context.JWTConfig
 	ctx         ctx.Context
 }
 
-func New(swaggerInfo *swagger.Info, logger *zerolog.Logger) *Lux {
-	swg := new(swagger.Swagger)
-	if swaggerInfo != nil {
-		swg.Info = *swaggerInfo
-	}
-	swg.SwaggerVersion = "2.0"
+func New(logger *zerolog.Logger) *Lux {
 	return &Lux{
 		logger:      logger,
 		server:      new(http.Server),
 		builtRouter: httprouter.New(),
-		swagger:     swg,
 	}
 }
 
@@ -64,34 +53,8 @@ func (l *Lux) SetMaxHeaderBytes(n int) {
 	l.server.MaxHeaderBytes = n
 }
 
-func (l *Lux) SetInfoEmail(email string) {
-	l.swagger.Info.Contact.Email = email
-}
-
-func (l *Lux) SetInfoLicense(name, link string) {
-	l.swagger.Info.License.Name = name
-	l.swagger.Info.License.URL = link
-}
-
 func (l *Lux) SetJWTConfig(cfg *context.JWTConfig) {
 	l.jwtConfig = cfg
-}
-
-func (l *Lux) ShowSwagger(path string) {
-	swaggerjson, err := json.Marshal(l.swagger)
-	if err != nil {
-		panic(err)
-	}
-
-	f, err := os.Create(filepath.Join(".", "swagger", "dist", "swagger.json"))
-	if err != nil {
-		panic(err)
-	}
-
-	f.Write(swaggerjson)
-	f.Close()
-
-	l.logger.Warn().Str("path", path).Msg("Swagger is available")
 }
 
 func (l *Lux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -114,7 +77,7 @@ func (l *Lux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	l.builtRouter.ServeHTTP(luxCtx.Response, luxCtx.Request)
 }
 
-func (l *Lux) buildServer(ctx ctx.Context, addr string) {
+func (l *Lux) buildServer(_ ctx.Context, addr string) {
 	l.server.Addr = addr
 	l.server.Handler = l
 	l.builtRouter = new(httprouter.Router)
