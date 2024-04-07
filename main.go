@@ -64,6 +64,38 @@ func main() {
 						Usage:   "Generate a controller",
 						Args:    true,
 						Action:  generateControllerCommand,
+						Flags: []cli.Flag{
+							&cli.BoolFlag{
+								Name:    "get",
+								Aliases: []string{"g"},
+								Usage:   "Generate a GET controller",
+								Value:   false,
+							},
+							&cli.BoolFlag{
+								Name:    "post",
+								Aliases: []string{"p"},
+								Usage:   "Generate a POST controller",
+								Value:   false,
+							},
+							&cli.BoolFlag{
+								Name:    "put",
+								Aliases: []string{"u"},
+								Usage:   "Generate a PUT controller",
+								Value:   false,
+							},
+							&cli.BoolFlag{
+								Name:    "patch",
+								Aliases: []string{"a"},
+								Usage:   "Generate a PATCH controller",
+								Value:   false,
+							},
+							&cli.BoolFlag{
+								Name:    "delete",
+								Aliases: []string{"d"},
+								Usage:   "Generate a DELETE controller",
+								Value:   false,
+							},
+						},
 					},
 				},
 			},
