@@ -34,7 +34,6 @@ func generateCommand(ctx *cli.Context) error {
 	builder.WriteString("import (\n")
 	builder.WriteString("\t\"context\"\n")
 	builder.WriteString("\t\"os\"\n")
-	builder.WriteString("\t\"os/signal\"\n")
 	builder.WriteString("\t\"log\"\n")
 	builder.WriteString("\t\"github.com/snowmerak/lux/v3/lux\"\n")
 	builder.WriteString("\t\"github.com/snowmerak/lux/v3/provider\"\n")
