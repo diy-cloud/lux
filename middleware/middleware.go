@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/snowmerak/lux/context"
+	"github.com/snowmerak/lux/v3/context"
 )
 
 type Request func(*context.LuxContext) (*context.LuxContext, int)

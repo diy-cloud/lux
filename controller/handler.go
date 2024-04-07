@@ -3,8 +3,8 @@ package controller
 import (
 	"net/http"
 
-	"github.com/snowmerak/lux/context"
-	"github.com/snowmerak/lux/middleware"
+	"github.com/snowmerak/lux/v3/context"
+	"github.com/snowmerak/lux/v3/middleware"
 )
 
 type Method string

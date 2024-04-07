@@ -3,9 +3,9 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/snowmerak/lux/context"
+	"github.com/snowmerak/lux/v3/context"
 
-	"github.com/snowmerak/lux/util"
+	"github.com/snowmerak/lux/v3/util"
 )
 
 var AccessControl = accessControl{}

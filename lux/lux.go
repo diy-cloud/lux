@@ -10,8 +10,8 @@ import (
 
 	"github.com/caddyserver/certmagic"
 	"github.com/julienschmidt/httprouter"
-	"github.com/snowmerak/lux/context"
-	"github.com/snowmerak/lux/controller"
+	"github.com/snowmerak/lux/v3/context"
+	"github.com/snowmerak/lux/v3/controller"
 	"golang.org/x/net/http2"
 )
 

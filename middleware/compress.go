@@ -8,7 +8,7 @@ import (
 
 	"github.com/andybalholm/brotli"
 	"github.com/golang/snappy"
-	"github.com/snowmerak/lux/context"
+	"github.com/snowmerak/lux/v3/context"
 )
 
 var CompressResponse = compressResponse{}

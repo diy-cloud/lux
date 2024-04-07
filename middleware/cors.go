@@ -3,7 +3,7 @@ package middleware
 import (
 	"strings"
 
-	"github.com/snowmerak/lux/context"
+	"github.com/snowmerak/lux/v3/context"
 )
 
 var SetAllow = setAllow{}

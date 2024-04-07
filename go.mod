@@ -1,4 +1,4 @@
-module github.com/snowmerak/lux
+module github.com/snowmerak/lux/v3
 
 go 1.20
 

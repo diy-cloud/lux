@@ -34,7 +34,7 @@ func generateMiddlewareResponse(name string) string {
 	builder.WriteString(name)
 	builder.WriteString("\n\n")
 	builder.WriteString("import (\n")
-	builder.WriteString("\t\"github.com/snowmerak/lux/context\"\n")
+	builder.WriteString("\t\"github.com/snowmerak/lux/v3/context\"\n")
 	builder.WriteString(")\n\n")
 
 	builder.WriteString("func NewResponse() func(*context.LuxContext) (*context.LuxContext, error) {\n")

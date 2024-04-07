@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/snowmerak/lux/context"
+	"github.com/snowmerak/lux/v3/context"
 )
 
 type AuthChecker func(lc *context.LuxContext, authorizationHeader string, tokenCookies ...*http.Cookie) bool
