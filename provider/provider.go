@@ -8,9 +8,10 @@ import (
 )
 
 type Provider struct {
-	constructors map[reflect.Type]map[reflect.Value]struct{}
-	container    map[reflect.Type]any
-	lock         sync.RWMutex
+	zeroDepConstructors []reflect.Value
+	constructors        map[reflect.Type]map[reflect.Value]struct{}
+	container           map[reflect.Type]any
+	lock                sync.RWMutex
 }
 
 func New() *Provider {
@@ -36,6 +37,11 @@ func (p *Provider) register(constructFunction any) error {
 	args, _, err := analyzeFunction(constructFunction)
 	if err != nil {
 		return err
+	}
+
+	if len(args) == 0 {
+		p.zeroDepConstructors = append(p.zeroDepConstructors, reflect.ValueOf(constructFunction))
+		return nil
 	}
 
 	for _, arg := range args {
@@ -188,6 +194,19 @@ func getContextType() reflect.Type {
 func (p *Provider) Construct(ctx context.Context) error {
 	p.lock.Lock()
 	defer p.lock.Unlock()
+
+	for _, con := range p.zeroDepConstructors {
+		returns := con.Call([]reflect.Value{})
+		for _, ret := range returns {
+			if ret.Type().Kind().String() == "error" {
+				if !ret.IsNil() {
+					return ret.Interface().(error)
+				}
+			}
+
+			p.container[ret.Type()] = ret.Interface()
+		}
+	}
 
 	p.container[getContextType()] = ctx
 	count := 0
