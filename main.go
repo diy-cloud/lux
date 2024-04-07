@@ -22,10 +22,11 @@ func main() {
 				UsageText: "lux generate [command] [path/to/package]\n\n" + "Example:\n" + "  lux generate middleware middleware/acl",
 				Subcommands: []*cli.Command{
 					{
-						Name:   "cmd",
-						Usage:  "Generate a command",
-						Args:   true,
-						Action: generateCommand,
+						Name:    "cmd",
+						Aliases: []string{"e"},
+						Usage:   "Generate a command",
+						Args:    true,
+						Action:  generateCommand,
 					},
 					{
 						Name:    "middleware",
