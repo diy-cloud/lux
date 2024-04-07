@@ -60,7 +60,7 @@ func generateController(name string, method string) string {
 	builder.WriteString("\t\t\treturn lc.ReplyString(\"Hello, World!\")\n")
 	builder.WriteString("\t\t},\n")
 	builder.WriteString("\t}\n")
-	builder.WriteString("}\n")
+	builder.WriteString("}\n\n")
 
 	builder.WriteString("func Register")
 	builder.WriteString(method)
