@@ -129,28 +129,30 @@ func JustRun(provider *Provider, function any) error {
 	return nil
 }
 
-func Update(provider *Provider, function any) error {
+func Update(provider *Provider, functions ...any) error {
 	provider.lock.Lock()
 	defer provider.lock.Unlock()
 
-	args, _, err := analyzeFunction(function)
-	if err != nil {
-		return err
-	}
-
-	reflectArgs := make([]reflect.Value, len(args))
-	for i, arg := range args {
-		v, ok := provider.container[arg]
-		if !ok {
-			return ErrNotProvided{arg}
+	for _, function := range functions {
+		args, _, err := analyzeFunction(function)
+		if err != nil {
+			return err
 		}
-		reflectArgs[i] = reflect.ValueOf(v)
-	}
 
-	results := reflect.ValueOf(function).Call(reflectArgs)
+		reflectArgs := make([]reflect.Value, len(args))
+		for i, arg := range args {
+			v, ok := provider.container[arg]
+			if !ok {
+				return ErrNotProvided{arg}
+			}
+			reflectArgs[i] = reflect.ValueOf(v)
+		}
 
-	for _, result := range results {
-		provider.container[result.Type()] = result.Interface()
+		results := reflect.ValueOf(function).Call(reflectArgs)
+
+		for _, result := range results {
+			provider.container[result.Type()] = result.Interface()
+		}
 	}
 
 	return nil
