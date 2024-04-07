@@ -4,6 +4,10 @@ import "context"
 
 type ListenAddress string
 
+func GenerateListenAddress(addr string) ListenAddress {
+	return ListenAddress(addr)
+}
+
 func ListenAndServe1(ctx context.Context, lx *Lux, addr ListenAddress) error {
 	return lx.ListenAndServe1(ctx, string(addr))
 }
