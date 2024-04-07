@@ -42,7 +42,7 @@ func generateController(name string, method string) string {
 	builder.WriteString("Controller struct{\n")
 	builder.WriteString("\trequestMiddlewares []middleware.Request\n")
 	builder.WriteString("\tresponseMiddlewares []middleware.Response\n")
-	builder.WriteString("\thandler controller.Handler")
+	builder.WriteString("\thandler controller.Handler\n")
 	builder.WriteString("}\n\n")
 
 	builder.WriteString("func New")
