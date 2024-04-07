@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"mime/multipart"
+	"net"
 	"net/http"
 	"os"
 )
@@ -85,35 +86,14 @@ func (l *LuxContext) GetRemoteAddress() string {
 }
 
 func (l *LuxContext) GetRemoteIP() string {
-	i := 0
-	end := -1
-	addr := l.Request.RemoteAddr
-	for i < len(addr) {
-		if addr[i] == ':' {
-			end = i
-		}
-		i++
-	}
-	if end == -1 {
-		return ""
-	}
-	return addr[:end]
+	ip, _, _ := net.SplitHostPort(l.Request.RemoteAddr)
+	return ip
+
 }
 
 func (l *LuxContext) GetRemotePort() string {
-	i := 0
-	end := -1
-	addr := l.Request.RemoteAddr
-	for i < len(addr) {
-		if addr[i] == ':' {
-			end = i
-		}
-		i++
-	}
-	if end == -1 {
-		return ""
-	}
-	return addr[end+1:]
+	_, port, _ := net.SplitHostPort(l.Request.RemoteAddr)
+	return port
 }
 
 func (l *LuxContext) ParseJSON(v interface{}) error {
