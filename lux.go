@@ -13,35 +13,28 @@ import (
 	"github.com/caddyserver/certmagic"
 	"github.com/julienschmidt/httprouter"
 	"github.com/snowmerak/lux/context"
-	"github.com/snowmerak/lux/handler"
-	"github.com/snowmerak/lux/middleware"
-	"github.com/snowmerak/lux/router"
 	"github.com/snowmerak/lux/swagger"
 	"golang.org/x/net/http2"
 )
 
 type Lux struct {
-	routers     []*router.RouterGroup
 	logger      *zerolog.Logger
 	server      *http.Server
-	middlewares []middleware.Set
 	builtRouter *httprouter.Router
 	swagger     *swagger.Swagger
 	jwtConfig   *context.JWTConfig
 	ctx         ctx.Context
 }
 
-func New(swaggerInfo *swagger.Info, logger *zerolog.Logger, middlewares ...middleware.Set) *Lux {
+func New(swaggerInfo *swagger.Info, logger *zerolog.Logger) *Lux {
 	swg := new(swagger.Swagger)
 	if swaggerInfo != nil {
 		swg.Info = *swaggerInfo
 	}
 	swg.SwaggerVersion = "2.0"
 	return &Lux{
-		routers:     []*router.RouterGroup{},
 		logger:      logger,
 		server:      new(http.Server),
-		middlewares: middlewares,
 		builtRouter: httprouter.New(),
 		swagger:     swg,
 	}
@@ -84,7 +77,7 @@ func (l *Lux) SetJWTConfig(cfg *context.JWTConfig) {
 	l.jwtConfig = cfg
 }
 
-func (l *Lux) ShowSwagger(path string, middlewares ...middleware.Set) {
+func (l *Lux) ShowSwagger(path string) {
 	swaggerjson, err := json.Marshal(l.swagger)
 	if err != nil {
 		panic(err)
@@ -97,9 +90,6 @@ func (l *Lux) ShowSwagger(path string, middlewares ...middleware.Set) {
 
 	f.Write(swaggerjson)
 	f.Close()
-
-	rg := l.NewRouterGroup(path, middlewares...)
-	rg.Statics("/", filepath.Join(".", "swagger", "dist"))
 
 	l.logger.Warn().Str("path", path).Msg("Swagger is available")
 }
@@ -121,32 +111,13 @@ func (l *Lux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(luxCtx.Response.StatusCode)
 		w.Write(luxCtx.Response.Body)
 	}()
-	if rs := middleware.ApplyRequests(luxCtx, l.middlewares); rs != "" {
-		l.logger.Error().Str("error", rs).Msg("request middleware error")
-		return
-	}
 	l.builtRouter.ServeHTTP(luxCtx.Response, luxCtx.Request)
-	if !luxCtx.IsOk() {
-		return
-	}
-	if rs := middleware.ApplyResponses(luxCtx, l.middlewares); rs != "" {
-		l.logger.Error().Str("error", rs).Msg("response middleware error")
-		return
-	}
 }
 
 func (l *Lux) buildServer(ctx ctx.Context, addr string) {
 	l.server.Addr = addr
 	l.server.Handler = l
 	l.builtRouter = new(httprouter.Router)
-	for _, routerGroup := range l.routers {
-		for path, routerMap := range routerGroup.Routers {
-			for method, router := range routerMap {
-				l.builtRouter.Handle(method, path, handler.Wrap(ctx, l.logger, l.jwtConfig, router.Handler))
-			}
-		}
-	}
-	l.routers = nil
 	l.logger.Info().Str("addr", addr).Msg("Server is ready to serve")
 }
 
