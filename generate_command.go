@@ -51,7 +51,7 @@ func generateCommand(ctx *cli.Context) error {
 	builder.WriteString("\t\t// Add your updators here\n")
 	builder.WriteString("\t}\n\n")
 	builder.WriteString("\tp := provider.New()\n")
-	builder.WriteString("\tif err := p.Register(constructors...); err != nil {\n\n")
+	builder.WriteString("\tif err := p.Register(constructors...); err != nil {\n")
 	builder.WriteString("\t\tlog.Fatal(err)\n")
 	builder.WriteString("\t}\n\n")
 	builder.WriteString("\tif err := p.Construct(ctx); err != nil {\n")
