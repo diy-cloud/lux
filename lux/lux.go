@@ -34,31 +34,31 @@ func New() *Lux {
 	}
 }
 
-func (l *Lux) SetLogger(logger *zerolog.Logger) {
+func SetLogger(l *Lux, logger *zerolog.Logger) {
 	l.logger = logger
 }
 
-func (l *Lux) SetReadHeaderTimeout(duration time.Duration) {
+func SetReadHeaderTimeout(l *Lux, duration time.Duration) {
 	l.server.ReadHeaderTimeout = duration
 }
 
-func (l *Lux) SetReadTimeout(duration time.Duration) {
+func SetReadTimeout(l *Lux, duration time.Duration) {
 	l.server.ReadTimeout = duration
 }
 
-func (l *Lux) SetWriteTimeout(duration time.Duration) {
+func SetWriteTimeout(l *Lux, duration time.Duration) {
 	l.server.WriteTimeout = duration
 }
 
-func (l *Lux) SetIdleTimeout(duration time.Duration) {
+func SetIdleTimeout(l *Lux, duration time.Duration) {
 	l.server.IdleTimeout = duration
 }
 
-func (l *Lux) SetMaxHeaderBytes(n int) {
+func SetMaxHeaderBytes(l *Lux, n int) {
 	l.server.MaxHeaderBytes = n
 }
 
-func (l *Lux) SetJWTConfig(cfg *context.JWTConfig) {
+func SetJWTConfig(l *Lux, cfg *context.JWTConfig) {
 	l.jwtConfig = cfg
 }
 
