@@ -1,0 +1,8 @@
+version: '3'
+services:
+  snowmerak-lux:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../../.:/workspace:cached
