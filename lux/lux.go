@@ -2,9 +2,12 @@ package lux
 
 import (
 	ctx "context"
+	"errors"
 	"net/http"
 	"time"
 
+	"github.com/gobwas/ws"
+	"github.com/gobwas/ws/wsutil"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
@@ -59,7 +62,7 @@ func (l *Lux) SetJWTConfig(cfg *context.JWTConfig) {
 	l.jwtConfig = cfg
 }
 
-func (l *Lux) AddController(route string, method controller.Method, controller controller.Controller) {
+func (l *Lux) AddRestController(route string, method controller.Method, controller controller.RestController) {
 	l.builtRouter.Handle(string(method), route, func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		luxCtx := new(context.LuxContext)
 		luxCtx.Request = r
@@ -80,6 +83,20 @@ func (l *Lux) AddController(route string, method controller.Method, controller c
 		}
 		w.WriteHeader(luxCtx.Response.StatusCode)
 		w.Write(luxCtx.Response.Body)
+	})
+}
+
+func (l *Lux) AddSocketController(route string, controller controller.SocketController) {
+	l.builtRouter.Handle(http.MethodGet, route, func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		conn, _, _, err := ws.UpgradeHTTP(r, w)
+		if err != nil {
+			l.logger.Error().Str("error", err.Error()).Msg("Socket upgrade error")
+			return
+		}
+
+		if err := controller.Serve(conn); err != nil && errors.Is(err, wsutil.ClosedError{}) {
+			l.logger.Error().Str("error", err.Error()).Msg("Socket controller error")
+		}
 	})
 }
 
