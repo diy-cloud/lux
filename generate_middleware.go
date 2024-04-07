@@ -16,7 +16,7 @@ func generateMiddlewareRequest(name string) string {
 	builder.WriteString("\n\n")
 	builder.WriteString("import (\n")
 	builder.WriteString("\t\"net/http\"\n\n")
-	builder.WriteString("\t\"github.com/snowmerak/lux/context\"\n")
+	builder.WriteString("\t\"github.com/snowmerak/lux/v3/context\"\n")
 	builder.WriteString(")\n\n")
 
 	builder.WriteString("func NewRequest() func(*context.LuxContext) (*context.LuxContext, int) {\n")
