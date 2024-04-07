@@ -62,7 +62,9 @@ func generateController(name string, method string) string {
 	builder.WriteString("\t}\n")
 	builder.WriteString("}\n")
 
-	builder.WriteString("func RegisterController(c *")
+	builder.WriteString("func Register")
+	builder.WriteString(method)
+	builder.WriteString("Controller(c *")
 	builder.WriteString(method)
 	builder.WriteString("Controller, l *lux.Lux) {\n")
 	builder.WriteString("\tl.AddController(Route, controller.")
