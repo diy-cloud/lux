@@ -84,29 +84,12 @@ func (l *Lux) AddController(route string, method controller.Method, controller c
 }
 
 func (l *Lux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	luxCtx := new(context.LuxContext)
-	luxCtx.Request = r
-	luxCtx.Response = context.NewResponse()
-	luxCtx.JWTConfig = l.jwtConfig
-	luxCtx.Logger = l.logger
-	luxCtx.Context = l.ctx
-	luxCtx.RequestContext = r.Context()
-	defer func() {
-		for key, values := range luxCtx.Response.Headers {
-			for _, value := range values {
-				w.Header().Add(key, value)
-			}
-		}
-		w.WriteHeader(luxCtx.Response.StatusCode)
-		w.Write(luxCtx.Response.Body)
-	}()
-	l.builtRouter.ServeHTTP(luxCtx.Response, luxCtx.Request)
+	l.builtRouter.ServeHTTP(w, r)
 }
 
 func (l *Lux) buildServer(_ ctx.Context, addr string) {
 	l.server.Addr = addr
-	l.server.Handler = l
-	l.builtRouter = new(httprouter.Router)
+	l.server.Handler = l.builtRouter
 	l.logger.Info().Str("addr", addr).Msg("Server is ready to serve")
 }
 
