@@ -3,7 +3,6 @@ module github.com/snowmerak/lux
 go 1.20
 
 require (
-	github.com/Workiva/go-datastructures v1.0.53
 	github.com/andybalholm/brotli v1.0.5
 	github.com/caddyserver/certmagic v0.17.2
 	github.com/gobwas/ws v1.2.1
@@ -11,6 +10,7 @@ require (
 	github.com/golang/snappy v0.0.4
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/rs/zerolog v1.29.1
+	github.com/urfave/cli/v2 v2.27.1
 	golang.org/x/net v0.10.0
 	google.golang.org/protobuf v1.30.0
 )
@@ -26,7 +26,6 @@ require (
 	github.com/mholt/acmez v1.1.1 // indirect
 	github.com/miekg/dns v1.1.54 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-	github.com/urfave/cli/v2 v2.27.1 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
