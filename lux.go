@@ -86,6 +86,7 @@ func (l *Lux) buildServer(_ ctx.Context, addr string) {
 
 func (l *Lux) ListenAndServe1(ctx ctx.Context, addr string) error {
 	l.buildServer(ctx, addr)
+	l.ctx = ctx
 	if err := l.server.ListenAndServe(); err != nil {
 		l.logger.Fatal().Str("error", err.Error()).Msg("Listen and serve error")
 		return err
@@ -95,6 +96,7 @@ func (l *Lux) ListenAndServe1(ctx ctx.Context, addr string) error {
 
 func (l *Lux) ListenAndServe1TLS(ctx ctx.Context, addr string, certFile string, keyFile string) error {
 	l.buildServer(ctx, addr)
+	l.ctx = ctx
 	if err := l.server.ListenAndServeTLS(certFile, keyFile); err != nil {
 		l.logger.Fatal().Str("error", err.Error()).Msg("Listen and serve TLS error")
 		return err
@@ -107,6 +109,7 @@ func (l *Lux) ListenAndServe1AutoTLS(ctx ctx.Context, addr []string) error {
 		addr = []string{"localhost:443"}
 	}
 	l.buildServer(ctx, addr[0])
+	l.ctx = ctx
 	if err := certmagic.HTTPS(addr, l.builtRouter); err != nil {
 		l.logger.Fatal().Str("error", err.Error()).Msg("Listen and serve Auto TLS error")
 		return err
@@ -116,6 +119,7 @@ func (l *Lux) ListenAndServe1AutoTLS(ctx ctx.Context, addr []string) error {
 
 func (l *Lux) ListenAndServe2(ctx ctx.Context, addr string) error {
 	l.buildServer(ctx, addr)
+	l.ctx = ctx
 	if err := http2.ConfigureServer(l.server, nil); err != nil {
 		l.logger.Fatal().Str("error", err.Error()).Msg("Http2 configuration error")
 		return err
@@ -129,6 +133,7 @@ func (l *Lux) ListenAndServe2(ctx ctx.Context, addr string) error {
 
 func (l *Lux) ListenAndServe2TLS(ctx ctx.Context, addr string, certFile string, keyFile string) error {
 	l.buildServer(ctx, addr)
+	l.ctx = ctx
 	if err := http2.ConfigureServer(l.server, nil); err != nil {
 		l.logger.Fatal().Str("error", err.Error()).Msg("Http2 configuration error")
 		return err
@@ -145,6 +150,7 @@ func (l *Lux) ListenAndServe2AutoTLS(ctx ctx.Context, addr []string) error {
 		addr = []string{"localhost:443"}
 	}
 	l.buildServer(ctx, addr[0])
+	l.ctx = ctx
 	if err := http2.ConfigureServer(l.server, nil); err != nil {
 		l.logger.Fatal().Str("error", err.Error()).Msg("Http2 configuration error")
 		return err
