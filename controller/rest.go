@@ -22,15 +22,15 @@ const (
 	ANY     = Method("*")
 )
 
-type Handler func(ctx *context.LuxContext) error
+type RestHandler func(ctx *context.LuxContext) error
 
-type Controller struct {
+type RestController struct {
 	RequestMiddlewares  []middleware.Request
-	Handler             Handler
+	Handler             RestHandler
 	ResponseMiddlewares []middleware.Response
 }
 
-func (c *Controller) Serve(lc *context.LuxContext) error {
+func (c *RestController) Serve(lc *context.LuxContext) error {
 	if err := middleware.ApplyRequests(lc, c.RequestMiddlewares); err != nil {
 		return err
 	}
