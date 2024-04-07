@@ -41,7 +41,7 @@ func generateCommand(ctx *cli.Context) error {
 	builder.WriteString(")\n\n")
 
 	builder.WriteString("func main() {\n")
-	builder.WriteString("\tctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)\n")
+	builder.WriteString("\tctx, cancel := context.WithCancel(context.Backgroud())\n")
 	builder.WriteString("\tdefer cancel()\n\n")
 	builder.WriteString("\tp := provider.New()\n")
 	builder.WriteString("\tif err := p.Register(lux.New, lux.GenerateListenAddress(\":8080\")); err != nil {\n\n")
