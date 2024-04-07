@@ -135,7 +135,13 @@ func generateControllerCommand(ctx *cli.Context) error {
 			return fmt.Errorf("failed to create directory: %w", err)
 		}
 
-		file, err := os.Create(filepath.Join(path, method+".controller.go"))
+		controllerFilePath := filepath.Join(path, method+".controller.go")
+
+		if _, err := os.Stat(controllerFilePath); !os.IsNotExist(err) {
+			return fmt.Errorf("controller already exists")
+		}
+
+		file, err := os.Create(controllerFilePath)
 		if err != nil {
 			return fmt.Errorf("failed to create file: %w", err)
 		}

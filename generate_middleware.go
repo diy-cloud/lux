@@ -78,6 +78,11 @@ func generateMiddlewareCommand(ctx *cli.Context) error {
 	if isRequest {
 		requestContent := generateMiddlewareRequest(packageName)
 		requestPath := filepath.Join(path, "request.go")
+
+		if _, err := os.Stat(requestPath); !os.IsNotExist(err) {
+			return fmt.Errorf("request middleware already exists")
+		}
+
 		if err := os.WriteFile(requestPath, []byte(requestContent), 0644); err != nil {
 			return fmt.Errorf("failed to create file: %w", err)
 		}
@@ -86,6 +91,11 @@ func generateMiddlewareCommand(ctx *cli.Context) error {
 	if isResponse {
 		responseContent := generateMiddlewareResponse(packageName)
 		responsePath := filepath.Join(path, "response.go")
+
+		if _, err := os.Stat(responsePath); !os.IsNotExist(err) {
+			return fmt.Errorf("response middleware already exists")
+		}
+
 		if err := os.WriteFile(responsePath, []byte(responseContent), 0644); err != nil {
 			return fmt.Errorf("failed to create file: %w", err)
 		}

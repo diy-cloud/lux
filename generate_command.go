@@ -55,7 +55,13 @@ func generateCommand(ctx *cli.Context) error {
 	builder.WriteString("\t<-ctx.Done()\n")
 	builder.WriteString("}\n")
 
-	if err := os.WriteFile(path+"/main.go", []byte(builder.String()), 0644); err != nil {
+	cmdFilePath := path + "/main.go"
+
+	if _, err := os.Stat(cmdFilePath); !os.IsNotExist(err) {
+		return fmt.Errorf("command already exists")
+	}
+
+	if err := os.WriteFile(cmdFilePath, []byte(builder.String()), 0644); err != nil {
 		return fmt.Errorf("failed to write main.go: %w", err)
 	}
 

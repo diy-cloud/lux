@@ -49,6 +49,11 @@ func generateServiceCommand(ctx *cli.Context) error {
 
 	serviceTemplate := generateServiceTemplate(packageName)
 	servicePath := filepath.Join(path, "service.go")
+
+	if _, err := os.Stat(servicePath); !os.IsNotExist(err) {
+		return fmt.Errorf("service already exists")
+	}
+
 	err := os.WriteFile(servicePath, []byte(serviceTemplate), 0644)
 	if err != nil {
 		return err
