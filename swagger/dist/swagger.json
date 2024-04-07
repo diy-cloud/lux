@@ -1,1 +1,0 @@
-{"swagger":"2.0","info":{"title":"Lux","description":"Lux is a lightweight web framework for Go. ","version":"1.0.0","contact":{},"license":{}},"paths":{"/":{"get":{"summary":"Hello world","description":"Hello world","produces":["text/plain"],"responses":{"200":{"description":"OK","schema":{"type":"string"}}}}}},"externalDocs":{}}
