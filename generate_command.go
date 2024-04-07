@@ -22,7 +22,6 @@ func generateCommand(ctx *cli.Context) error {
 		return fmt.Errorf("invalid package path, must not be empty")
 	}
 
-	packageName := elems[len(elems)-1]
 	path := strings.Join(elems, "/")
 
 	if err := os.MkdirAll(path, os.ModePerm); err != nil {
