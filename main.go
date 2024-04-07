@@ -95,6 +95,12 @@ func main() {
 								Usage:   "Generate a DELETE controller",
 								Value:   false,
 							},
+							&cli.BoolFlag{
+								Name:    "socket",
+								Aliases: []string{"w"},
+								Usage:   "Generate a SOCKET controller",
+								Value:   false,
+							},
 						},
 					},
 				},
