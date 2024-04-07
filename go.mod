@@ -16,6 +16,7 @@ require (
 )
 
 require (
+	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/gobwas/httphead v0.1.0 // indirect
 	github.com/gobwas/pool v0.2.1 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
@@ -24,6 +25,9 @@ require (
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mholt/acmez v1.1.1 // indirect
 	github.com/miekg/dns v1.1.54 // indirect
+	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+	github.com/urfave/cli/v2 v2.27.1 // indirect
+	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.24.0 // indirect
