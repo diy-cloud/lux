@@ -6,10 +6,12 @@ import (
 	"time"
 
 	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 
 	"github.com/caddyserver/certmagic"
 	"github.com/julienschmidt/httprouter"
 	"github.com/snowmerak/lux/context"
+	"github.com/snowmerak/lux/controller"
 	"golang.org/x/net/http2"
 )
 
@@ -21,9 +23,9 @@ type Lux struct {
 	ctx         ctx.Context
 }
 
-func New(logger *zerolog.Logger) *Lux {
+func New() *Lux {
 	return &Lux{
-		logger:      logger,
+		logger:      &log.Logger,
 		server:      new(http.Server),
 		builtRouter: httprouter.New(),
 	}
@@ -55,6 +57,30 @@ func (l *Lux) SetMaxHeaderBytes(n int) {
 
 func (l *Lux) SetJWTConfig(cfg *context.JWTConfig) {
 	l.jwtConfig = cfg
+}
+
+func (l *Lux) AddController(route string, method controller.Method, controller controller.Controller) {
+	l.builtRouter.Handle(string(method), route, func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		luxCtx := new(context.LuxContext)
+		luxCtx.Request = r
+		luxCtx.Response = context.NewResponse()
+		luxCtx.RouteParams = p
+		luxCtx.Context = l.ctx
+		luxCtx.RequestContext = r.Context()
+		luxCtx.Logger = l.logger
+
+		if err := controller.Serve(luxCtx); err != nil {
+			l.logger.Error().Str("error", err.Error()).Msg("Controller error")
+		}
+
+		for key, values := range luxCtx.Response.Headers {
+			for _, value := range values {
+				w.Header().Add(key, value)
+			}
+		}
+		w.WriteHeader(luxCtx.Response.StatusCode)
+		w.Write(luxCtx.Response.Body)
+	})
 }
 
 func (l *Lux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
