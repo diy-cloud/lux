@@ -25,21 +25,21 @@ const (
 type Handler func(ctx *context.LuxContext) error
 
 type Controller struct {
-	requestMiddlewares  []middleware.Request
-	handler             Handler
-	responseMiddlewares []middleware.Response
+	RequestMiddlewares  []middleware.Request
+	Handler             Handler
+	ResponseMiddlewares []middleware.Response
 }
 
 func (c *Controller) Serve(lc *context.LuxContext) error {
-	if err := middleware.ApplyRequests(lc, c.requestMiddlewares); err != nil {
+	if err := middleware.ApplyRequests(lc, c.RequestMiddlewares); err != nil {
 		return err
 	}
 
-	if err := c.handler(lc); err != nil {
+	if err := c.Handler(lc); err != nil {
 		return err
 	}
 
-	if err := middleware.ApplyResponses(lc, c.responseMiddlewares); err != nil {
+	if err := middleware.ApplyResponses(lc, c.ResponseMiddlewares); err != nil {
 		return err
 	}
 
