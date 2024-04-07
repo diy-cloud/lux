@@ -15,7 +15,9 @@ var CompressResponse = compressResponse{}
 
 type compressResponse struct{}
 
-func (cr compressResponse) Snappy() Response {
+type SnappyResponseMiddleware Response
+
+func (cr compressResponse) Snappy() SnappyResponseMiddleware {
 	return func(l *context.LuxContext) (*context.LuxContext, error) {
 		acceptEncodings := strings.Split(l.Request.Header.Get("Accept-Encoding"), ", ")
 		if len(acceptEncodings) > 0 && acceptEncodings[0] != "snappy" || len(acceptEncodings) == 0 {
@@ -36,7 +38,9 @@ func (cr compressResponse) Snappy() Response {
 	}
 }
 
-func (cr compressResponse) Gzip() Response {
+type GzipResponseMiddleware Response
+
+func (cr compressResponse) Gzip() GzipResponseMiddleware {
 	return func(l *context.LuxContext) (*context.LuxContext, error) {
 		acceptEncodings := strings.Split(l.Request.Header.Get("Accept-Encoding"), ", ")
 		if len(acceptEncodings) > 0 && acceptEncodings[0] != "gzip" || len(acceptEncodings) == 0 {
@@ -61,7 +65,9 @@ func (cr compressResponse) Gzip() Response {
 	}
 }
 
-func (cr compressResponse) Brotli() Response {
+type BrotliResponseMiddleware Response
+
+func (cr compressResponse) Brotli() BrotliResponseMiddleware {
 	return func(l *context.LuxContext) (*context.LuxContext, error) {
 		acceptEncodings := strings.Split(l.Request.Header.Get("Accept-Encoding"), ", ")
 		if len(acceptEncodings) > 0 && acceptEncodings[0] != "br" || len(acceptEncodings) == 0 {

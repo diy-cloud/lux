@@ -10,28 +10,36 @@ var SetAllow = setAllow{}
 
 type setAllow struct{}
 
-func (sa setAllow) Headers(headers ...string) Response {
+type AllowHeadersMiddleware Response
+
+func (sa setAllow) Headers(headers ...string) AllowHeadersMiddleware {
 	return func(l *context.LuxContext) (*context.LuxContext, error) {
 		l.Response.Headers.Set("Access-Control-Allow-Headers", strings.Join(headers, ","))
 		return l, nil
 	}
 }
 
-func (sa setAllow) Methods(methods ...string) Response {
+type AllowMethodsMiddleware Response
+
+func (sa setAllow) Methods(methods ...string) AllowMethodsMiddleware {
 	return func(l *context.LuxContext) (*context.LuxContext, error) {
 		l.Response.Headers.Set("Access-Control-Allow-Methods", strings.Join(methods, ","))
 		return l, nil
 	}
 }
 
-func (sa setAllow) Origins(origins ...string) Response {
+type AllowOriginsMiddleware Response
+
+func (sa setAllow) Origins(origins ...string) AllowOriginsMiddleware {
 	return func(l *context.LuxContext) (*context.LuxContext, error) {
 		l.Response.Headers.Set("Access-Control-Allow-Origin", strings.Join(origins, ","))
 		return l, nil
 	}
 }
 
-func (sa setAllow) Credentials() Response {
+type AllowCredentialsMiddleware Response
+
+func (sa setAllow) Credentials() AllowCredentialsMiddleware {
 	return func(l *context.LuxContext) (*context.LuxContext, error) {
 		l.Response.Headers.Set("Access-Control-Allow-Credentials", "true")
 		return l, nil

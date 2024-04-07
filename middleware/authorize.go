@@ -8,7 +8,9 @@ import (
 
 type AuthChecker func(lc *context.LuxContext, authorizationHeader string, tokenCookies ...*http.Cookie) bool
 
-func Auth(authChecker AuthChecker, tokenName ...string) Request {
+type AuthMiddleware Request
+
+func Auth(authChecker AuthChecker, tokenName ...string) AuthMiddleware {
 	return func(ctx *context.LuxContext) (*context.LuxContext, int) {
 		req := ctx.Request
 		authorizationHeader := req.Header.Get("Authorization")

@@ -12,7 +12,9 @@ var AccessControl = accessControl{}
 
 type accessControl struct{}
 
-func (ac accessControl) AllowStaticIPs(ips ...string) Request {
+type AllowStaticIpsMiddleware Request
+
+func (ac accessControl) AllowStaticIPs(ips ...string) AllowStaticIpsMiddleware {
 	return func(ctx *context.LuxContext) (*context.LuxContext, int) {
 		req := ctx.Request
 		remoteIP := util.GetIP(req.RemoteAddr)
@@ -25,7 +27,9 @@ func (ac accessControl) AllowStaticIPs(ips ...string) Request {
 	}
 }
 
-func (ac accessControl) BlockStaticIPs(ips ...string) Request {
+type BlockStaticIPsMiddleware Request
+
+func (ac accessControl) BlockStaticIPs(ips ...string) BlockStaticIPsMiddleware {
 	return func(ctx *context.LuxContext) (*context.LuxContext, int) {
 		req := ctx.Request
 		remoteIP := util.GetIP(req.RemoteAddr)
@@ -38,7 +42,9 @@ func (ac accessControl) BlockStaticIPs(ips ...string) Request {
 	}
 }
 
-func (ac accessControl) AllowDynamicIPs(checker func(remoteIP string) bool) Request {
+type AllowDynamicIPsMiddleware Request
+
+func (ac accessControl) AllowDynamicIPs(checker func(remoteIP string) bool) AllowDynamicIPsMiddleware {
 	return func(ctx *context.LuxContext) (*context.LuxContext, int) {
 		req := ctx.Request
 		remoteIP := util.GetIP(req.RemoteAddr)
@@ -49,7 +55,9 @@ func (ac accessControl) AllowDynamicIPs(checker func(remoteIP string) bool) Requ
 	}
 }
 
-func (ac accessControl) BlockDynamicIPs(checker func(remoteIP string) bool) Request {
+type BlockDynamicIPsMiddleware Request
+
+func (ac accessControl) BlockDynamicIPs(checker func(remoteIP string) bool) BlockDynamicIPsMiddleware {
 	return func(ctx *context.LuxContext) (*context.LuxContext, int) {
 		req := ctx.Request
 		remoteIP := util.GetIP(req.RemoteAddr)
@@ -60,7 +68,9 @@ func (ac accessControl) BlockDynamicIPs(checker func(remoteIP string) bool) Requ
 	}
 }
 
-func (ac accessControl) AllowStaticPorts(ports ...string) Request {
+type AllowStaticPortsMiddleware Request
+
+func (ac accessControl) AllowStaticPorts(ports ...string) AllowStaticPortsMiddleware {
 	return func(ctx *context.LuxContext) (*context.LuxContext, int) {
 		req := ctx.Request
 		remotePort := util.GetPort(req.RemoteAddr)
@@ -73,7 +83,9 @@ func (ac accessControl) AllowStaticPorts(ports ...string) Request {
 	}
 }
 
-func (ac accessControl) BlockStaticPorts(ports ...string) Request {
+type BlockStaticPortsMiddleware Request
+
+func (ac accessControl) BlockStaticPorts(ports ...string) BlockStaticPortsMiddleware {
 	return func(ctx *context.LuxContext) (*context.LuxContext, int) {
 		req := ctx.Request
 		remotePort := util.GetPort(req.RemoteAddr)
@@ -86,7 +98,9 @@ func (ac accessControl) BlockStaticPorts(ports ...string) Request {
 	}
 }
 
-func (ac accessControl) AllowDynamicPorts(checker func(remotePort string) bool) Request {
+type AllowDynamicPortsMiddleware Request
+
+func (ac accessControl) AllowDynamicPorts(checker func(remotePort string) bool) AllowDynamicPortsMiddleware {
 	return func(ctx *context.LuxContext) (*context.LuxContext, int) {
 		req := ctx.Request
 		remotePort := util.GetPort(req.RemoteAddr)
@@ -97,7 +111,9 @@ func (ac accessControl) AllowDynamicPorts(checker func(remotePort string) bool) 
 	}
 }
 
-func (ac accessControl) BlockDynamicPorts(checker func(remotePort string) bool) Request {
+type BlockDynamicPortsMiddleware Request
+
+func (ac accessControl) BlockDynamicPorts(checker func(remotePort string) bool) BlockDynamicPortsMiddleware {
 	return func(ctx *context.LuxContext) (*context.LuxContext, int) {
 		req := ctx.Request
 		remotePort := util.GetPort(req.RemoteAddr)
