@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/urfave/cli/v2"
@@ -12,7 +13,13 @@ func main() {
 		Usage: "A simple web framework",
 		Commands: []*cli.Command{
 			{
-				Name: "init",
+				Name:      "init",
+				Usage:     "Initialize a new project",
+				UsageText: "lux init [repository]\n\n" + "Example:\n" + "  lux init myproject",
+				Action: func(ctx *cli.Context) error {
+					log.Println("not implemented")
+					return nil
+				},
 				Args: true,
 			},
 			{
