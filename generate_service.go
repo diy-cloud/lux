@@ -15,6 +15,8 @@ func generateServiceTemplate(name string) string {
 	builder.WriteString(name)
 	builder.WriteString("\n\n")
 
+	name = strings.ToUpper(name[:1]) + name[1:]
+
 	builder.WriteString("type ")
 	builder.WriteString(name)
 	builder.WriteString("Service struct{}\n\n")
@@ -54,8 +56,11 @@ func generateServiceCommand(ctx *cli.Context) error {
 		return fmt.Errorf("service already exists")
 	}
 
-	err := os.WriteFile(servicePath, []byte(serviceTemplate), 0644)
-	if err != nil {
+	if err := os.MkdirAll(path, os.ModePerm); err != nil {
+		return fmt.Errorf("failed to create directory: %w", err)
+	}
+
+	if err := os.WriteFile(servicePath, []byte(serviceTemplate), 0644); err != nil {
 		return err
 	}
 
