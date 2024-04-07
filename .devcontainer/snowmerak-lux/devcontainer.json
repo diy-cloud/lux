@@ -5,5 +5,14 @@
   ],
   "service": "snowmerak-lux",
   "workspaceFolder": "/workspace",
-  "shutdownAction": "stopCompose"
+  "shutdownAction": "stopCompose",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "golang.go-nightly",
+        "github.copilot",
+        "github.copilot-chat"
+      ]
+    }
+  }
 }
