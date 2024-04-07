@@ -22,7 +22,7 @@ func generateControllerMetadata(name string) string {
 	return builder.String()
 }
 
-func generateController(name string, method string) string {
+func generateRestController(name string, method string) string {
 	method = strings.ToUpper(method[:1]) + strings.ToLower(method[1:])
 
 	builder := strings.Builder{}
@@ -42,7 +42,7 @@ func generateController(name string, method string) string {
 	builder.WriteString("Controller struct{\n")
 	builder.WriteString("\trequestMiddlewares []middleware.Request\n")
 	builder.WriteString("\tresponseMiddlewares []middleware.Response\n")
-	builder.WriteString("\thandler controller.Handler\n")
+	builder.WriteString("\thandler controller.RestHandler\n")
 	builder.WriteString("}\n\n")
 
 	builder.WriteString("func New")
@@ -67,12 +67,61 @@ func generateController(name string, method string) string {
 	builder.WriteString("Controller(c *")
 	builder.WriteString(method)
 	builder.WriteString("Controller, l *lux.Lux) {\n")
-	builder.WriteString("\tl.AddController(Route, controller.")
+	builder.WriteString("\tl.AddRestController(Route, controller.")
 	builder.WriteString(strings.ToUpper(method))
-	builder.WriteString(", controller.Controller{\n")
+	builder.WriteString(", controller.RestController{\n")
 	builder.WriteString("\t\tRequestMiddlewares: c.requestMiddlewares,\n")
 	builder.WriteString("\t\tHandler: c.handler,\n")
 	builder.WriteString("\t\tResponseMiddlewares: c.responseMiddlewares,\n")
+	builder.WriteString("\t})\n")
+	builder.WriteString("}\n")
+
+	return builder.String()
+}
+
+func generateSocketController(name string, method string) string {
+	builder := strings.Builder{}
+	builder.WriteString("package ")
+	builder.WriteString(name)
+	builder.WriteString("\n\n")
+
+	builder.WriteString("import (\n")
+	builder.WriteString("\t\"github.com/snowmerak/lux/v3/context\"\n")
+	builder.WriteString("\t\"github.com/snowmerak/lux/v3/controller\"\n")
+	builder.WriteString("\t\"github.com/snowmerak/lux/v3/lux\"\n")
+	builder.WriteString(")\n\n")
+
+	builder.WriteString("type ")
+	builder.WriteString(method)
+	builder.WriteString("Controller struct{\n")
+	builder.WriteString("\thandler controller.SocketHandler\n")
+	builder.WriteString("}\n\n")
+
+	builder.WriteString("func New")
+	builder.WriteString(method)
+	builder.WriteString("Controller() *")
+	builder.WriteString(method)
+	builder.WriteString("Controller {\n")
+	builder.WriteString("\treturn &")
+	builder.WriteString(method)
+	builder.WriteString("Controller{\n")
+	builder.WriteString("\t\thandler: func(wc *context.WSContext) error {\n")
+	builder.WriteString("\t\t\t// Write your handler here\n")
+	builder.WriteString("\t\t\tif err := wc.WriteText([]byte(\"hello, world!\")); err != nil {\n")
+	builder.WriteString("\t\t\t\treturn err\n")
+	builder.WriteString("\t\t\t}\n")
+	builder.WriteString("\t\t\treturn wc.Close()\n")
+	builder.WriteString("\t\t},\n")
+	builder.WriteString("\t}\n")
+	builder.WriteString("}\n\n")
+
+	builder.WriteString("func Register")
+	builder.WriteString(method)
+	builder.WriteString("Controller(c *")
+	builder.WriteString(method)
+	builder.WriteString("Controller, l *lux.Lux) {\n")
+	builder.WriteString("\tl.AddSocketController(Route, controller.SocketController{\n")
+	builder.WriteString("\t\tHandler: c.handler,\n")
 	builder.WriteString("\t})\n")
 	builder.WriteString("}\n")
 
@@ -109,6 +158,9 @@ func generateControllerCommand(ctx *cli.Context) error {
 	if ctx.Bool("delete") {
 		methods = append(methods, "delete")
 	}
+	if ctx.Bool("socket") {
+		methods = append(methods, "socket")
+	}
 
 	packageName := elems[len(elems)-1]
 	path := strings.Join(elems, "/")
@@ -132,7 +184,15 @@ func generateControllerCommand(ctx *cli.Context) error {
 	}
 
 	for _, method := range methods {
-		controller := generateController(packageName, method)
+		controller := ""
+		switch method {
+		case "get", "post", "put", "patch", "delete":
+			controller = generateRestController(packageName, method)
+		case "socket":
+			controller = generateSocketController(packageName, method)
+		default:
+			return fmt.Errorf("invalid method: %s", method)
+		}
 
 		if err := os.MkdirAll(path, os.ModePerm); err != nil {
 			return fmt.Errorf("failed to create directory: %w", err)
