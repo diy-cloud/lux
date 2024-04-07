@@ -45,7 +45,7 @@ func generateCommand(ctx *cli.Context) error {
 
 	builder.WriteString("func main() {\n")
 	builder.WriteString("\tctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)\n")
-	builder.WriteString("\tdefer cancel()\n")
+	builder.WriteString("\tdefer cancel()\n\n")
 	builder.WriteString("\tp := provider.New()\n")
 	builder.WriteString("\tp.Register(lux.New)\n\n")
 	builder.WriteString("\tif err := p.Construct(ctx); err != nil {\n")
