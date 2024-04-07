@@ -30,9 +30,7 @@ func generateCommand(ctx *cli.Context) error {
 	}
 
 	builder := strings.Builder{}
-	builder.WriteString("package ")
-	builder.WriteString(packageName)
-	builder.WriteString("\n\n")
+	builder.WriteString("package main\n\n")
 
 	builder.WriteString("import (\n")
 	builder.WriteString("\t\"context\"\n")
