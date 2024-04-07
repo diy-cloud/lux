@@ -3,6 +3,7 @@ package context
 import (
 	"encoding/json"
 	"io"
+	"net/http"
 	"os"
 
 	"google.golang.org/protobuf/proto"
@@ -118,4 +119,8 @@ func (l *LuxContext) ReplyFile(path string) error {
 		return err
 	}
 	return l.ReplyBinary(buf)
+}
+
+func (l *LuxContext) ReplyAuto(data []byte) error {
+	return l.Reply(http.DetectContentType(data), data)
 }
