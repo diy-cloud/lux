@@ -7,17 +7,16 @@ import (
 	"github.com/snowmerak/lux/context"
 )
 
-type Set struct {
-	Request  func(*context.LuxContext) (*context.LuxContext, int)
-	Response func(*context.LuxContext) (*context.LuxContext, error)
-}
+type Request func(*context.LuxContext) (*context.LuxContext, int)
+type Response func(*context.LuxContext) (*context.LuxContext, error)
 
-func ApplyRequests(ctx *context.LuxContext, middlewares []Set) string {
+func ApplyRequests(ctx *context.LuxContext, middlewares []Request) string {
 	for _, m := range middlewares {
-		if m.Request == nil {
+		if m == nil {
 			continue
 		}
-		_, code := m.Request(ctx)
+
+		_, code := m(ctx)
 		if 400 <= code && code < 600 {
 			ctx.Response.WriteHeader(code)
 			return fmt.Sprintf("Middleware Request Reading %s: %s from %s", ctx.Request.URL.Path, http.StatusText(code), ctx.Request.RemoteAddr)
@@ -26,12 +25,13 @@ func ApplyRequests(ctx *context.LuxContext, middlewares []Set) string {
 	return ""
 }
 
-func ApplyResponses(ctx *context.LuxContext, middlewares []Set) string {
+func ApplyResponses(ctx *context.LuxContext, middlewares []Response) string {
 	for _, m := range middlewares {
-		if m.Response == nil {
+		if m == nil {
 			continue
 		}
-		_, err := m.Response(ctx)
+
+		_, err := m(ctx)
 		if err != nil {
 			return fmt.Sprintf("Middleware Response Writing %s: %s from %s", ctx.Request.URL.Path, err.Error(), ctx.Request.RemoteAddr)
 		}

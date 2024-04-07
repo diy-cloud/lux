@@ -11,9 +11,12 @@ import (
 	"github.com/snowmerak/lux/context"
 )
 
-var Snappy = Set{
-	Request: nil,
-	Response: func(l *context.LuxContext) (*context.LuxContext, error) {
+var CompressResponse = compressResponse{}
+
+type compressResponse struct{}
+
+func (cr compressResponse) Snappy() Response {
+	return func(l *context.LuxContext) (*context.LuxContext, error) {
 		acceptEncodings := strings.Split(l.Request.Header.Get("Accept-Encoding"), ", ")
 		if len(acceptEncodings) > 0 && acceptEncodings[0] != "snappy" || len(acceptEncodings) == 0 {
 			return l, nil
@@ -30,12 +33,11 @@ var Snappy = Set{
 		l.Response.Headers.Add("Content-Encoding", "snappy")
 		l.Request.Header.Set("Accept-Encoding", strings.Join(acceptEncodings[1:], ", "))
 		return l, nil
-	},
+	}
 }
 
-var Gzip = Set{
-	Request: nil,
-	Response: func(l *context.LuxContext) (*context.LuxContext, error) {
+func (cr compressResponse) Gzip() Response {
+	return func(l *context.LuxContext) (*context.LuxContext, error) {
 		acceptEncodings := strings.Split(l.Request.Header.Get("Accept-Encoding"), ", ")
 		if len(acceptEncodings) > 0 && acceptEncodings[0] != "gzip" || len(acceptEncodings) == 0 {
 			return l, nil
@@ -56,12 +58,11 @@ var Gzip = Set{
 		}
 		l.Request.Header.Set("Accept-Encoding", strings.Join(acceptEncodings[1:], ", "))
 		return l, nil
-	},
+	}
 }
 
-var Brotli = Set{
-	Request: nil,
-	Response: func(l *context.LuxContext) (*context.LuxContext, error) {
+func (cr compressResponse) Brotli() Response {
+	return func(l *context.LuxContext) (*context.LuxContext, error) {
 		acceptEncodings := strings.Split(l.Request.Header.Get("Accept-Encoding"), ", ")
 		if len(acceptEncodings) > 0 && acceptEncodings[0] != "br" || len(acceptEncodings) == 0 {
 			return l, nil
@@ -79,5 +80,5 @@ var Brotli = Set{
 		l.Response.Headers.Add("Content-Encoding", "br")
 		l.Request.Header.Set("Accept-Encoding", strings.Join(acceptEncodings[1:], ", "))
 		return l, nil
-	},
+	}
 }
