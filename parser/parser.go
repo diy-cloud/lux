@@ -81,6 +81,12 @@ func (p *Parser) ParseFromRoot() error {
 		}
 	}
 
+	for _, v := range p.Updaters {
+		for i := range v {
+			v[i].PackagePath = filepath.Join(p.ModuleName, v[i].PackagePath)
+		}
+	}
+
 	return nil
 }
 
