@@ -13,6 +13,7 @@ func main() {
 		Commands: []*cli.Command{
 			{
 				Name:      "init",
+				Aliases:   []string{"i"},
 				Usage:     "Initialize a new project",
 				UsageText: "lux init [repository]\n\n" + "Example:\n" + "  lux init myproject",
 				Action:    initProject,
@@ -20,6 +21,7 @@ func main() {
 			},
 			{
 				Name:      "build",
+				Aliases:   []string{"b"},
 				Usage:     "Build the project",
 				UsageText: "lux build [path/to/package]\n\n" + "Example:\n" + "  lux build .",
 				Action:    buildAppCommand,
@@ -27,6 +29,7 @@ func main() {
 			},
 			{
 				Name:      "run",
+				Aliases:   []string{"r"},
 				Usage:     "Run the project",
 				UsageText: "lux run [path/to/package]\n\n" + "Example:\n" + "  lux run .",
 				Action:    runAppCommand,
