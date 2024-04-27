@@ -21,7 +21,7 @@ func runAppCommand(ctx *cli.Context) error {
 		return fmt.Errorf("failed to generate components set: %w", err)
 	}
 
-	if err := exec.Command("go", "run", packageName).Run(); err != nil {
+	if err := exec.Command("go", "run", "./"+packageName+"/.").Run(); err != nil {
 		return fmt.Errorf("failed to run app: %w", err)
 	}
 
