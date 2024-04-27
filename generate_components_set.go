@@ -163,7 +163,7 @@ func buildComponentSet(writer *bytes.Buffer, setName string, cons []parser.Compo
 	writer.WriteString("\tclone := make([]any, len(s.cons))\n")
 	writer.WriteString("\tcopy(clone, s.cons)\n")
 	writer.WriteString("\treturn clone\n")
-	writer.WriteString("}\n")
+	writer.WriteString("}\n\n")
 
 	writer.WriteString("func (s *")
 	writer.WriteString(structName)
@@ -171,7 +171,7 @@ func buildComponentSet(writer *bytes.Buffer, setName string, cons []parser.Compo
 	writer.WriteString("\tclone := make([]any, len(s.upds))\n")
 	writer.WriteString("\tcopy(clone, s.upds)\n")
 	writer.WriteString("\treturn clone\n")
-	writer.WriteString("}\n")
+	writer.WriteString("}\n\n")
 
 	return nil
 }
