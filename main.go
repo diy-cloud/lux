@@ -36,6 +36,13 @@ func main() {
 						Action:  generateCommand,
 					},
 					{
+						Name:    "component",
+						Aliases: []string{"cp"},
+						Usage:   "Generate a component",
+						Args:    true,
+						Action:  generateComponentsSetCommand,
+					},
+					{
 						Name:    "middleware",
 						Aliases: []string{"m"},
 						Usage:   "Generate a middleware",
@@ -67,7 +74,7 @@ func main() {
 					},
 					{
 						Name:    "controller",
-						Aliases: []string{"c"},
+						Aliases: []string{"co"},
 						Usage:   "Generate a controller",
 						Args:    true,
 						Action:  generateControllerCommand,
