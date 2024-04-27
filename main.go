@@ -19,6 +19,20 @@ func main() {
 				Args:      true,
 			},
 			{
+				Name:      "build",
+				Usage:     "Build the project",
+				UsageText: "lux build [path/to/package]\n\n" + "Example:\n" + "  lux build .",
+				Action:    buildAppCommand,
+				Args:      true,
+			},
+			{
+				Name:      "run",
+				Usage:     "Run the project",
+				UsageText: "lux run [path/to/package]\n\n" + "Example:\n" + "  lux run .",
+				Action:    runAppCommand,
+				Args:      true,
+			},
+			{
 				Name:      "generate",
 				Aliases:   []string{"g"},
 				Usage:     "Generate a file or a directory",
