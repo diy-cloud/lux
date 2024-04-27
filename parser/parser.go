@@ -19,14 +19,16 @@ type Component struct {
 }
 
 type Parser struct {
-	RootPath   string
-	ModuleName string
-	Components map[string][]Component
+	RootPath     string
+	ModuleName   string
+	Constructors map[string][]Component
+	Updaters     map[string][]Component
 }
 
 func New() *Parser {
 	return &Parser{
-		Components: map[string][]Component{},
+		Constructors: map[string][]Component{},
+		Updaters:     map[string][]Component{},
 	}
 }
 
@@ -73,7 +75,7 @@ func (p *Parser) ParseFromRoot() error {
 		return fmt.Errorf("failed to parse from path: %w", err)
 	}
 
-	for _, v := range p.Components {
+	for _, v := range p.Constructors {
 		for i := range v {
 			v[i].PackagePath = filepath.Join(p.ModuleName, v[i].PackagePath)
 		}
@@ -102,28 +104,33 @@ func (p *Parser) ParseFromPath(path string) error {
 		packagePath = strings.TrimPrefix(packagePath, "/")
 		packagePath = filepath.Dir(packagePath)
 
-		comps, err := p.ParseFile(path, packagePath)
+		comps, upds, err := p.ParseFile(path, packagePath)
 		if err != nil {
 			return fmt.Errorf("failed to parse file: %w", err)
 		}
 
 		for k, v := range comps {
-			p.Components[k] = append(p.Components[k], v...)
+			p.Constructors[k] = append(p.Constructors[k], v...)
+		}
+
+		for k, v := range upds {
+			p.Updaters[k] = append(p.Updaters[k], v...)
 		}
 
 		return nil
 	})
 }
 
-func (p *Parser) ParseFile(path string, packagePath string) (map[string][]Component, error) {
+func (p *Parser) ParseFile(path string, packagePath string) (map[string][]Component, map[string][]Component, error) {
 	fs := token.NewFileSet()
 	f, err := parser.ParseFile(fs, path, nil, parser.ParseComments)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse file: %w", err)
+		return nil, nil, fmt.Errorf("failed to parse file: %w", err)
 	}
 
 	packageName := ""
-	components := map[string][]Component{}
+	constructors := map[string][]Component{}
+	updaters := map[string][]Component{}
 
 	ast.Inspect(f, func(n ast.Node) bool {
 		if n == nil {
@@ -136,20 +143,32 @@ func (p *Parser) ParseFile(path string, packagePath string) (map[string][]Compon
 		case *ast.FuncDecl:
 			if x.Recv == nil {
 				isComp := false
-				compSets := []string{}
+				consSets := []string{}
+				updSets := []string{}
 				if x.Doc == nil {
 					return true
 				}
 
 				for _, c := range x.Doc.List {
 					c.Text = strings.ToLower(strings.TrimSpace(c.Text))
-					if strings.HasPrefix(c.Text, "// lux:comp") {
+
+					if strings.HasPrefix(c.Text, "// lux:cons") {
 						isComp = true
-						sp := strings.Split(strings.TrimPrefix(c.Text, "// lux:comp"), " ")
+						sp := strings.Split(strings.TrimPrefix(c.Text, "// lux:cons"), " ")
 						for i := range sp {
 							sp[i] = strings.TrimSpace(sp[i])
 						}
-						compSets = append(compSets, sp...)
+						consSets = append(consSets, sp...)
+						break
+					}
+
+					if strings.HasPrefix(c.Text, "// lux:upd") {
+						isComp = false
+						sp := strings.Split(strings.TrimPrefix(c.Text, "// lux:upd"), " ")
+						for i := range sp {
+							sp[i] = strings.TrimSpace(sp[i])
+						}
+						updSets = append(updSets, sp...)
 						break
 					}
 				}
@@ -158,12 +177,24 @@ func (p *Parser) ParseFile(path string, packagePath string) (map[string][]Compon
 					return true
 				}
 
-				for _, compSet := range compSets {
-					if compSet == "" {
+				for _, consSet := range consSets {
+					if consSet == "" {
 						continue
 					}
 
-					components[compSet] = append(components[compSet], Component{
+					constructors[consSet] = append(constructors[consSet], Component{
+						PackagePath:  packagePath,
+						PackageName:  packageName,
+						FunctionName: x.Name.Name,
+					})
+				}
+
+				for _, updSet := range updSets {
+					if updSet == "" {
+						continue
+					}
+
+					updaters[updSet] = append(updaters[updSet], Component{
 						PackagePath:  packagePath,
 						PackageName:  packageName,
 						FunctionName: x.Name.Name,
@@ -175,5 +206,5 @@ func (p *Parser) ParseFile(path string, packagePath string) (map[string][]Compon
 		return true
 	})
 
-	return components, nil
+	return constructors, updaters, nil
 }
