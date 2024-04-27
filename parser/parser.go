@@ -169,7 +169,7 @@ func (p *Parser) ParseFile(path string, packagePath string) (map[string][]Compon
 					}
 
 					if strings.HasPrefix(c.Text, "// lux:upd") {
-						isComp = false
+						isComp = true
 						sp := strings.Split(strings.TrimPrefix(c.Text, "// lux:upd"), " ")
 						for i := range sp {
 							sp[i] = strings.TrimSpace(sp[i])
