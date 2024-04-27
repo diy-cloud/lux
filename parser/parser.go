@@ -6,6 +6,7 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -65,10 +66,20 @@ func (p *Parser) ReadModule() error {
 
 func (p *Parser) ParseFromRoot() error {
 	if err := p.ReadModule(); err != nil {
-		return err
+		return fmt.Errorf("failed to read module: %w", err)
 	}
 
-	return p.ParseFromPath(p.RootPath)
+	if err := p.ParseFromPath(p.RootPath); err != nil {
+		return fmt.Errorf("failed to parse from path: %w", err)
+	}
+
+	for _, v := range p.Components {
+		for i := range v {
+			v[i].PackagePath = filepath.Join(p.ModuleName, v[i].PackagePath)
+		}
+	}
+
+	return nil
 }
 
 func (p *Parser) ParseFromPath(path string) error {
@@ -84,6 +95,8 @@ func (p *Parser) ParseFromPath(path string) error {
 		if filepath.Ext(path) != ".go" {
 			return nil
 		}
+
+		log.Printf("Parsing %s\n", path)
 
 		packagePath := strings.TrimPrefix(path, p.RootPath)
 		packagePath = strings.TrimPrefix(packagePath, "/")
